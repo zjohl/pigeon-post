@@ -30,4 +30,4 @@ I believe you need to make a heroku account before I can add you as a collaborat
 
 If the deploy has a migration, run `heroku run rake db:migrate` first.
 
-Run `git subtree push --prefix pigeonpost-backend heroku master` from the root directory of the project.
+Run `git push heroku master` from the root directory of the project.
