@@ -37,7 +37,7 @@ RSpec.describe "Deliveries", :type => :request do
     expect(json['origin']['longitude']).to eq(delivery.origin_longitude)
   end
 
-  it "can create a new delivery" do
+  it "can create a new delivery without a destination" do
     sender = FactoryBot.create(:user)
     receiver = FactoryBot.create(:user)
 
@@ -48,10 +48,6 @@ RSpec.describe "Deliveries", :type => :request do
         latitude: 2,
         longitude: 3
       },
-      destination: {
-        latitude: 4,
-        longitude: 5
-      },
       sender_id: sender.id,
       receiver_id: receiver.id
     }
@@ -61,6 +57,29 @@ RSpec.describe "Deliveries", :type => :request do
 
     json = JSON.parse(response.body)
     expect(json['droneId']).to eq(1)
+  end
+
+  it "can update a delivery with a destination" do
+    sender = FactoryBot.create(:user)
+    receiver = FactoryBot.create(:user)
+    delivery = FactoryBot.create(:delivery, sender_id: sender.id, receiver_id: receiver.id)
+
+    put "/api/deliveries/#{delivery.id}", params: {
+      status: "in_progress",
+      destination: {
+        latitude: 12,
+        longitude: 37.2
+      },
+    }
+
+    expect(response.content_type).to eq("application/json")
+    expect(response).to have_http_status(:ok)
+
+    json = JSON.parse(response.body)
+    expect(json['id']).to eq(delivery.id)
+    expect(json['status']).to eq("in_progress")
+    expect(json['destination']['latitude']).to eq(12)
+    expect(json['destination']['longitude']).to eq(37.2)
   end
 
   it "can search deliveries by user" do

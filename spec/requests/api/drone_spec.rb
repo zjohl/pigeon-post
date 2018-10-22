@@ -55,4 +55,27 @@ RSpec.describe "Drones", :type => :request do
     expect(json['status']).to eq("cool")
     expect(json['batteryPercent']).to eq(1)
   end
+
+  it "can update a drone" do
+    drone = FactoryBot.create(:drone)
+
+    post "/api/drones/#{drone.id}", params: {
+       position: {
+        latitude: 17,
+        longitude: 23
+       },
+       status: "super_cool",
+       battery_percent: 99,
+    }
+
+    expect(response.content_type).to eq("application/json")
+    expect(response).to have_http_status(:ok)
+
+    json = JSON.parse(response.body)
+
+    expect(json['position']['latitude']).to eq(17)
+    expect(json['position']['longitude']).to eq(23)
+    expect(json['status']).to eq("super_cool")
+    expect(json['batteryPercent']).to eq(99)
+  end
 end

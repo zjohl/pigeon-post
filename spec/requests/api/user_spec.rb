@@ -81,4 +81,23 @@ RSpec.describe "Users", :type => :request do
     expect(json['firstName']).to eq(  "person-first")
     expect(json['lastName']).to eq("person-last")
   end
+
+  it "can update a user" do
+    user = FactoryBot.create(:user)
+
+    put "/api/users/#{user.id}", params: {
+        first_name: "person-first-new",
+        last_name: "person-last-new",
+    }
+
+    expect(response.content_type).to eq("application/json")
+    expect(response).to have_http_status(:ok)
+
+    json = JSON.parse(response.body)
+
+    expect(json['email']).to eq(user.email)
+    expect(json['password']).to eq(user.password)
+    expect(json['firstName']).to eq(  "person-first-new")
+    expect(json['lastName']).to eq("person-last-new")
+  end
 end

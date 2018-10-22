@@ -25,5 +25,18 @@ module Api
           drone: drone,
       }
     end
+
+    def update
+      params.permit(:status, :battery_percent, position: [:latitude, :longitude])
+
+      drone = Drone.update!(latitude: params[:position][:latitude],
+                            longitude: params[:position][:longitude],
+                            status: params[:status],
+                            battery_percent: params[:battery_percent])
+
+      render partial: "shared/json/drone.json", status: :ok, locals: {
+          drone: drone,
+      }
+    end
   end
 end
