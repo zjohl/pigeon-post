@@ -27,9 +27,10 @@ module Api
     end
 
     def update
-      params.permit(:status, :battery_percent, position: [:latitude, :longitude])
+      params.permit(:id, :status, :battery_percent, position: [:latitude, :longitude])
 
-      drone = Drone.update!(latitude: params[:position][:latitude],
+      drone = Drone.find(params[:id])
+      drone.update!(latitude: params[:position][:latitude],
                             longitude: params[:position][:longitude],
                             status: params[:status],
                             battery_percent: params[:battery_percent])

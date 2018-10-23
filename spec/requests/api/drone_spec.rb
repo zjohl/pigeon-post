@@ -59,7 +59,7 @@ RSpec.describe "Drones", :type => :request do
   it "can update a drone" do
     drone = FactoryBot.create(:drone)
 
-    post "/api/drones/#{drone.id}", params: {
+    put "/api/drones/#{drone.id}", params: {
        position: {
         latitude: 17,
         longitude: 23

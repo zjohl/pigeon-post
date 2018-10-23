@@ -26,9 +26,10 @@ module Api
     end
 
     def update
-      params.permit(:first_name, :last_name)
+      params.permit(:first_name, :last_name, :id)
 
-      user = User.update!(first_name: params[:first_name], last_name: params[:last_name])
+      user = User.find(params[:id])
+      user.update!(first_name: params[:first_name], last_name: params[:last_name])
 
       render partial: "shared/json/user.json", status: :ok, locals: {
           user: user,
