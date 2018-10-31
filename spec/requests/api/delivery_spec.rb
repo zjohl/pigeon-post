@@ -105,7 +105,7 @@ RSpec.describe "Deliveries", :type => :request do
     user = FactoryBot.create(:user)
     other = FactoryBot.create(:user)
 
-    FactoryBot.create(:delivery, sender_id: user.id, receiver_id: other.id, status: "pending")
+    delivery = FactoryBot.create(:delivery, sender_id: user.id, receiver_id: other.id, status: "pending")
     FactoryBot.create(:delivery, sender_id: other.id, receiver_id: user.id, status: "complete")
 
     get "/api/deliveries/search", params: {
@@ -120,5 +120,9 @@ RSpec.describe "Deliveries", :type => :request do
 
     expect(json['deliveries'].length).to eq(1)
     expect(json['deliveries'][0]['status']).to eq("pending")
+    expect(json['deliveries'][0]['droneId']).to eq(delivery.drone_id)
+    expect(json['deliveries'][0]['destination']['latitude']).to eq(delivery.destination_latitude)
+    expect(json['deliveries'][0]['sender']['id']).to eq(user.id)
+    expect(json['deliveries'][0]['receiver']['id']).to eq(other.id)
   end
 end

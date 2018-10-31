@@ -9,12 +9,12 @@ json.destination do
 	json.longitude 		delivery.destination_longitude
 end
 json.status				delivery.status
-json.sender do |sender|
+json.sender do
 	json.id             sender.id
 	json.firstName      sender.first_name
 	json.lastName       sender.last_name
 end
-json.receiver do |receiver|
+json.receiver do
 	json.id             receiver.id
 	json.firstName      receiver.first_name
 	json.lastName       receiver.last_name
