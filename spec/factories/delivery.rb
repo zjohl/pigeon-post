@@ -1,12 +1,12 @@
 FactoryBot.define do
   factory :delivery do
-  	sequence(:drone_id) { |n| n }
-    status { :pending }
+    status { :requested }
     origin_latitude { 1 }
     origin_longitude { 2 }
     destination_latitude { 3 }
     destination_longitude { 4 }
-    sender_id { 5 }
-    receiver_id { 6 }
+    association :drone
+    association :sender, factory: :user
+    association :receiver, factory: :user
   end
 end

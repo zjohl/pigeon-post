@@ -40,10 +40,11 @@ RSpec.describe "Deliveries", :type => :request do
   it "can create a new delivery without a destination" do
     sender = FactoryBot.create(:user)
     receiver = FactoryBot.create(:user)
+    drone = FactoryBot.create(:drone)
 
     post "/api/deliveries", params: {
-      drone_id: 1,
-      status: "pending",
+      drone_id: drone.id,
+      status: "requested",
       origin: {
         latitude: 2,
         longitude: 3
@@ -56,7 +57,7 @@ RSpec.describe "Deliveries", :type => :request do
     expect(response).to have_http_status(:created)
 
     json = JSON.parse(response.body)
-    expect(json['droneId']).to eq(1)
+    expect(json['droneId']).to eq(drone.id)
   end
 
   it "can update a delivery with a destination" do
@@ -65,7 +66,7 @@ RSpec.describe "Deliveries", :type => :request do
     delivery = FactoryBot.create(:delivery, sender_id: sender.id, receiver_id: receiver.id)
 
     put "/api/deliveries/#{delivery.id}", params: {
-      status: "in_progress",
+      status: "accepted",
       destination: {
         latitude: 12,
         longitude: 37.2
@@ -77,7 +78,7 @@ RSpec.describe "Deliveries", :type => :request do
 
     json = JSON.parse(response.body)
     expect(json['id']).to eq(delivery.id)
-    expect(json['status']).to eq("in_progress")
+    expect(json['status']).to eq("accepted")
     expect(json['destination']['latitude']).to eq(12)
     expect(json['destination']['longitude']).to eq(37.2)
   end
@@ -105,12 +106,12 @@ RSpec.describe "Deliveries", :type => :request do
     user = FactoryBot.create(:user)
     other = FactoryBot.create(:user)
 
-    delivery = FactoryBot.create(:delivery, sender_id: user.id, receiver_id: other.id, status: "pending")
-    FactoryBot.create(:delivery, sender_id: other.id, receiver_id: user.id, status: "complete")
+    delivery = FactoryBot.create(:delivery, sender_id: user.id, receiver_id: other.id, status: "requested")
+    FactoryBot.create(:delivery, sender_id: other.id, receiver_id: user.id, status: "completed")
 
     get "/api/deliveries/search", params: {
       user_id: user.id,
-      status: "pending"
+      status: "requested"
     }
 
     expect(response.content_type).to eq("application/json")
@@ -119,7 +120,7 @@ RSpec.describe "Deliveries", :type => :request do
     json = JSON.parse(response.body)
 
     expect(json['deliveries'].length).to eq(1)
-    expect(json['deliveries'][0]['status']).to eq("pending")
+    expect(json['deliveries'][0]['status']).to eq("requested")
     expect(json['deliveries'][0]['droneId']).to eq(delivery.drone_id)
     expect(json['deliveries'][0]['destination']['latitude']).to eq(delivery.destination_latitude)
     expect(json['deliveries'][0]['sender']['id']).to eq(user.id)
